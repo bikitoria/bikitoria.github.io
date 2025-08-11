@@ -1,0 +1,118 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Victoria Piquer</title><!-- typing + theme scripts --><script src="/scripts/typing-text.js" defer></script><script src="/scripts/theme-toggle.js" defer></script><script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js" defer></script><script src="/scripts/experience-chart.js" defer></script><link rel="stylesheet" href="/_astro/index.DaSin9P3.css"></head> <body style="margin:0;"> <!-- removed background inline --> <header class="site-header"> <nav class="nav"> <div class="links"> <a href="mailto:victoriapiquer.3@gmail.com">Contact</a> <a href="https://www.linkedin.com/in/victoria-piquer-35452a25a/" target="_blank" rel="noopener">LinkedIn</a> <a href="https://github.com/bikitoria" target="_blank" rel="noopener">GitHub</a> <a href="/portfolio">Portfolio</a> </div> <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" aria-pressed="false"> <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"> <circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4 12H2m20 0h-2M5 5l-1.4-1.4M20.4 20.4 19 19M5 19l-1.4 1.4M20.4 3.6 19 5"></path> </svg> <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> </button> </nav> </header> <main>  <section class="hero-block"> <span class="typing-wrap hero-title" data-text data-loops="2" data-type="70" data-erase="50" data-pause="600" data-keep="0" data-keepwords="2" data-keepprefix="3" aria-live="polite" data-astro-cid-dpb7jah2> <span class="typing-text" data-astro-cid-dpb7jah2>
+Hi, I'm Victoria
+</span> <span class="caret" aria-hidden="true" data-astro-cid-dpb7jah2></span> </span>  <p class="hero-subtitle">UCalgary Computer Science • Software Dev</p> </section> <section class="about"> <p>
+I’m a Computer Science student at the University of Calgary with a passion
+      for software development, competitive programming, politics, economic history, and the gym.
+</p> </section> <div style="max-width: 1000px; margin: auto; height: 420px;"> <canvas id="expChart" style="width:100%; height:100%;"></canvas> </div>  <script type="module" src="/_astro/index.astro_astro_type_script_index_0_lang.DwbIT2HM.js"></script> <script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const el = document.getElementById("expChart");
+  if (!el || !window.Chart) return;
+
+  // 1) Load & sort experiences
+  let data = [];
+  try {
+    const res = await fetch("/data/experiences.json", { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    data = await res.json();
+  } catch (e) {
+    console.error("Could not load experiences:", e);
+    return;
+  }
+  data.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+// 2) Build series with a real, lowest first point
+const labels = [];
+const values = [];
+const isReal = [];
+const titles = [];
+
+const PEAK = (i) => {
+  const t = i + 1;
+  const bump = 0.8 + i * 0.15;      // peak above baseline
+  return t + bump;
+};
+const DIP = (i) => {
+  const t = i + 1;
+  const dipAmt = 1.2 + i * 0.20;    // dramatic dip
+  // Clamp dips so they are NEVER as low as the first point
+  return Math.max(0.45, t - dipAmt); // >= 0.45
+};
+
+// First point: real, visible, and the absolute lowest
+labels.push("");            // no label text (or use "Start")
+values.push(0.3);           // lowest value on the chart
+isReal.push(true);          // show big dot
+titles.push("Start");       // tooltip text (optional)
+
+// Then: peak (real) → dip (synthetic) → peak → ...
+for (let i = 0; i < data.length; i++) {
+  // real peak for this experience
+  labels.push(
+    new Date(data[i].date).toLocaleDateString(undefined, { month: "short", year: "numeric" })
+  );
+  values.push(PEAK(i));
+  isReal.push(true);
+  titles.push(data[i].title);
+
+  // synthetic dip between this and the next experience
+  if (i < data.length - 1) {
+    labels.push("");
+    values.push(DIP(i));    // guaranteed > 0.3 due to clamp 0.45
+    isReal.push(false);     // hide dot
+    titles.push("");
+  }
+}
+
+  // 3) Theme colors
+  const cs = getComputedStyle(document.documentElement);
+  const lineColor = (cs.getPropertyValue("--link").trim() || "#007bff");
+
+  // 4) Chart (axes hidden, big dots only on real points)
+  const chart = new Chart(el.getContext("2d"), {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        borderColor: lineColor,
+        borderWidth: 3,
+        tension: 0,                     // choppy, sharp corners
+        fill: false,
+        pointRadius: (ctx) => isReal[ctx.dataIndex] ? 9 : 0,
+        pointHoverRadius: (ctx) => isReal[ctx.dataIndex] ? 11 : 0,
+        pointBackgroundColor: lineColor,
+        pointBorderColor: "#fff",
+        pointBorderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          filter: (ti) => isReal[ti.dataIndex], // tooltips only for real points
+          callbacks: {
+            title: () => "",
+            label: (ctx) => `${titles[ctx.dataIndex]} (${ctx.formattedValue})`
+          }
+        }
+      },
+      scales: {
+        x: { display: false },
+        y: { display: false }
+      }
+    }
+  });
+
+  // 5) Update colors on theme toggle
+  const recolor = () => {
+    const c = getComputedStyle(document.documentElement);
+    const line = (c.getPropertyValue("--link").trim() || lineColor);
+    chart.data.datasets[0].borderColor = line;
+    chart.data.datasets[0].pointBackgroundColor = line;
+    chart.update();
+  };
+  new MutationObserver(recolor).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+});
+  </script>  </main> </body></html>
