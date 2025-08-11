@@ -1,0 +1,121 @@
+@import "tailwindcss";
+:root { --max-w: 900px; }
+
+/* Header */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(242, 240, 239, 0.85);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid #e6e2df;
+}
+
+.nav{
+  position: relative;                /* so the button can anchor to it */
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;               /* vertical alignment baseline */
+  justify-content: center;           /* center the links */
+}
+.links{
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.links a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: transform 0.1s ease, opacity 0.2s ease; /* smooth animation */
+
+}
+
+.links a:hover {
+  opacity: 2; /* subtle change instead of big jump */
+  transform: translateY(-1.5px) scale(1.01); /* slightly less dramatic */
+}
+
+/*
+main
+*/
+.hero { 
+  display: block;       /* ensure it's treated as a block-level element */
+  padding-left: 20ch;   /* move it right a bit */
+  font-size: 2rem; 
+  font-weight: 500;
+ }
+
+@media (max-width: 768px) {
+  .typing {
+    font-size: 2.2rem; /* tablet size */
+    border-right-width: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .typing {
+    font-size: 1.8rem; /* mobile size */
+    border-right-width: 2px;
+  }
+}
+
+@font-face {
+  font-family: 'Anticyclone';
+  src: url('/fonts/Anticyclone.woff2') format('woff2'),
+       url('/fonts/Anticyclone.woff') format('woff'),
+       url('/fonts/Anticyclone.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+:root {
+  --bg: #f5f5f5;
+  --text: #222;
+  --muted: #e6e2df;
+  --link: #333;
+  --veil: rgba(242,240,239,.85);
+}
+
+:root[data-theme="dark"] {
+  --bg: #1e1e1e;               /* dark grey background */
+  --text: #e0e0e0;             /* light grey text */
+  --muted: #3a3a3a;            /* borders / muted elements */
+  --link: #e0e0e0;             /* soft bluish links */
+  --veil: rgba(30, 30, 30, 0.85); /* semi-transparent overlay */
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  transition: background .25s ease, color .25s ease;
+  font-family: 'Anticyclone', sans-serif;
+}
+
+/* Header colors */
+.site-header { background: var(--veil); border-bottom: 1px solid var(--muted); }
+.links a { color: var(--link); }
+
+/* Toggle button */
+/* Minimal round icon button pinned to the right, vertically centered */
+.theme-toggle{
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px; height: 36px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: none; border-radius: 50%;
+  background: transparent; color: var(--text);
+  cursor: pointer;
+  transition: background-color .2s ease, opacity .2s ease, transform .2s ease;
+}
+.theme-toggle:hover{ background-color: var(--muted); opacity:.9; transform: translateY(-50%) scale(1.05); }
+
+.theme-toggle svg{ width: 20px; height: 20px; }
+.theme-toggle .sun{ display:inline; }
+.theme-toggle .moon{ display:none; }
+:root[data-theme="dark"] .theme-toggle .sun{ display:none; }
+:root[data-theme="dark"] .theme-toggle .moon{ display:inline; }

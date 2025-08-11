@@ -1,0 +1,51 @@
+---
+interface Props {
+  text?: string;
+  loops?: number;
+  typeMs?: number;
+  eraseMs?: number;
+  pauseMs?: number;
+  keep?: number;          // (existing) keep N characters
+  keepWords?: number;     // NEW: keep first N words
+  keepPrefix?: number;    // NEW: plus first M characters of the NEXT word
+  class?: string;
+}
+
+const {
+  text = "",
+  loops = 2,
+  typeMs = 70,
+  eraseMs = 50,
+  pauseMs = 600,
+  keep = 0,
+  keepWords = 0,
+  keepPrefix = 0,
+  class: className = "",
+} = Astro.props;
+---
+
+<span
+  class={`typing-wrap ${className}`}
+  data-text={text}
+  data-loops={loops}
+  data-type={typeMs}
+  data-erase={eraseMs}
+  data-pause={pauseMs}
+  data-keep={keep}
+  data-keepwords={keepWords}
+  data-keepprefix={keepPrefix}
+  aria-live="polite"
+>
+  <span class="typing-text"><slot /></span>
+  <span class="caret" aria-hidden="true"></span>
+</span>
+
+<style>
+  .typing-wrap { display: inline-flex; align-items: baseline; white-space: nowrap; }
+  .typing-text { font-weight: 500; }
+  .caret {
+    display: inline-block; width: 2px; height: 1em; background: currentColor;
+    margin-left: 4px; animation: caret-blink .8s step-end infinite; transform: translateY(2px);
+  }
+  @keyframes caret-blink { 50% { opacity: 0; } }
+</style>
