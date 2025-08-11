@@ -4,25 +4,138 @@ import TypingText from "../components/TypingText.astro";
 ---
 
 <Layout>
-	<section class="hero-block">
-	<TypingText class="hero-title" keepWords={2} keepPrefix={3}>
-  		Hi, I'm Victoria
-	</TypingText>
-	<p class="hero-subtitle">UCalgary Computer Science • Software Dev</p>
+  <section class="hero-block">
+    <TypingText class="hero-title" keepWords={2} keepPrefix={3}>
+      Hi, I'm Victoria
+    </TypingText>
+    <p class="hero-subtitle">UCalgary Computer Science • Software Dev</p>
+  </section>
 
-	</section>
-	
-	<!-- About Me Section -->
   <section class="about">
     <p>
-      I’m a Computer Science student at the University of Calgary with a passion 
-      for software development, competitive programming, and IT solutions. 
-      As President of the Competitive Programming Club, I lead events that help 
-      students strengthen their algorithm and problem-solving skills.  
-      I’ve also worked in IT support, teaching, and web development, and I’m 
-      always looking for new challenges that push me to learn and grow.
+      I’m a Computer Science student at the University of Calgary with a passion
+      for software development, competitive programming, politics, economic history, and the gym.
     </p>
   </section>
 
-  
+  <div style="max-width: 1000px; margin: auto; height: 420px;">
+    <canvas id="expChart" style="width:100%; height:100%;"></canvas>
+  </div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+<script is:inline>
+document.addEventListener("DOMContentLoaded", async () => {
+  const el = document.getElementById("expChart");
+  if (!el || !window.Chart) return;
+
+  // 1) Load & sort experiences
+  let data = [];
+  try {
+    const res = await fetch("/data/experiences.json", { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    data = await res.json();
+  } catch (e) {
+    console.error("Could not load experiences:", e);
+    return;
+  }
+  data.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+// 2) Build series with a real, lowest first point
+const labels = [];
+const values = [];
+const isReal = [];
+const titles = [];
+
+const PEAK = (i) => {
+  const t = i + 1;
+  const bump = 0.8 + i * 0.15;      // peak above baseline
+  return t + bump;
+};
+const DIP = (i) => {
+  const t = i + 1;
+  const dipAmt = 1.2 + i * 0.20;    // dramatic dip
+  // Clamp dips so they are NEVER as low as the first point
+  return Math.max(0.45, t - dipAmt); // >= 0.45
+};
+
+// First point: real, visible, and the absolute lowest
+labels.push("");            // no label text (or use "Start")
+values.push(0.3);           // lowest value on the chart
+isReal.push(true);          // show big dot
+titles.push("Start");       // tooltip text (optional)
+
+// Then: peak (real) → dip (synthetic) → peak → ...
+for (let i = 0; i < data.length; i++) {
+  // real peak for this experience
+  labels.push(
+    new Date(data[i].date).toLocaleDateString(undefined, { month: "short", year: "numeric" })
+  );
+  values.push(PEAK(i));
+  isReal.push(true);
+  titles.push(data[i].title);
+
+  // synthetic dip between this and the next experience
+  if (i < data.length - 1) {
+    labels.push("");
+    values.push(DIP(i));    // guaranteed > 0.3 due to clamp 0.45
+    isReal.push(false);     // hide dot
+    titles.push("");
+  }
+}
+
+  // 3) Theme colors
+  const cs = getComputedStyle(document.documentElement);
+  const lineColor = (cs.getPropertyValue("--link").trim() || "#007bff");
+
+  // 4) Chart (axes hidden, big dots only on real points)
+  const chart = new Chart(el.getContext("2d"), {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        borderColor: lineColor,
+        borderWidth: 3,
+        tension: 0,                     // choppy, sharp corners
+        fill: false,
+        pointRadius: (ctx) => isReal[ctx.dataIndex] ? 9 : 0,
+        pointHoverRadius: (ctx) => isReal[ctx.dataIndex] ? 11 : 0,
+        pointBackgroundColor: lineColor,
+        pointBorderColor: "#fff",
+        pointBorderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          filter: (ti) => isReal[ti.dataIndex], // tooltips only for real points
+          callbacks: {
+            title: () => "",
+            label: (ctx) => `${titles[ctx.dataIndex]} (${ctx.formattedValue})`
+          }
+        }
+      },
+      scales: {
+        x: { display: false },
+        y: { display: false }
+      }
+    }
+  });
+
+  // 5) Update colors on theme toggle
+  const recolor = () => {
+    const c = getComputedStyle(document.documentElement);
+    const line = (c.getPropertyValue("--link").trim() || lineColor);
+    chart.data.datasets[0].borderColor = line;
+    chart.data.datasets[0].pointBackgroundColor = line;
+    chart.update();
+  };
+  new MutationObserver(recolor).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+});
+  </script>
 </Layout>

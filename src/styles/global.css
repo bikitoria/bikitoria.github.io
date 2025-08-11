@@ -38,7 +38,18 @@
   opacity: 2; /* subtle change instead of big jump */
   transform: translateY(-1.5px) scale(1.01); /* slightly less dramatic */
 }
-
+.exp-graph {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem 1.25rem;
+  background: var(--veil);
+  border: 1px solid var(--muted);
+  border-radius: 12px;
+}
+.exp-graph h2 {
+  margin: 0 0 .75rem 0;
+  font-size: 1.25rem;
+}
 /*
 main
 */
@@ -61,6 +72,17 @@ main
   margin: 0.15rem 0 0 0;     /* tiny gap under title */
   line-height: 1.3;
   opacity: 0.85;
+}
+
+.about {
+  background: var(--veil);       /* same color as header */
+  border: 1px solid var(--muted);
+  max-width: 60ch;               /* keeps text from being too wide */
+  margin: 1.5rem 0 0 40ch;       /* matches hero-block padding-left */
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  color: var(--text);
+  line-height: 1.5;
 }
 
 /* Responsive: move both together */
