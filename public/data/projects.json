@@ -2,15 +2,15 @@
   {
     "title": "facebook plus",
     "description": "facebook clone with special features + bobs burgers",
-    "link": "https://github.com/bikitoria/Facebook-plus",
+    "code": "https://github.com/bikitoria/Facebook-plus",
     "image": "/images/facebook-plus.png",
-    "tech": ["React", "Node.js", "MongoDB"]
+    "tech": ["swift", "Xcode", "firebase"]
   },
   {
-    "title": "Another Project",
-    "description": "Another awesome project.",
-    "link": "https://github.com/bikitoria/another-project",
-    "image": "/images/facebook-plus.png",
-    "tech": ["React", "Node.js", "MongoDB"]
+    "title": "This Website!",
+    "description": "My personal website :)",
+    "code": "https://github.com/bikitoria/bikitoria.github.io",
+    "image": "/images/website.png",
+    "tech": ["Astro", "Javascript", "Tailwind CSS", "gh-pages"]
   }
 ]
