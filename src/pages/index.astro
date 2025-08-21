@@ -64,11 +64,9 @@ import TypingText from "../components/TypingText.astro";
   </section>
 
   <!-- Chart.js -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"
-  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 
-  <script is:inline>
+    <script is:inline>
     document.addEventListener("DOMContentLoaded", async () => {
       const el = document.getElementById("expChart");
       if (!el || !window.Chart) return;
@@ -76,96 +74,88 @@ import TypingText from "../components/TypingText.astro";
       // 1) Load & sort experiences
       let data = [];
       try {
-        const res = await fetch("/data/experiences.json", {
-          cache: "no-store",
-        });
+        const res = await fetch("/data/experiences.json", { cache: "no-store" });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         data = await res.json();
       } catch (e) {
         console.error("Could not load experiences:", e);
         return;
       }
-      data.sort((a, b) => new Date(a.date) - new Date(b.date));
+      data.sort((a, b) => new Date(a.dateStart) - new Date(b.dateStart));
 
-      // 2) Build series with a real, lowest first point
+      // 2) Build series
       const labels = [];
       const values = [];
       const isReal = [];
-      const titles = [];
 
-      const PEAK = (i) => {
-        const t = i + 1;
-        const bump = 0.8 + i * 0.15; // peak above baseline
-        return t + bump;
-      };
-      const DIP = (i) => {
-        const t = i + 1;
-        const dipAmt = 1.2 + i * 0.2; // dramatic dip
-        // Clamp dips so they are NEVER as low as the first point
-        return Math.max(0.45, t - dipAmt); // >= 0.45
-      };
+      const PEAK = (i) => i + 1 + 0.8 + i * 0.15;
+      const DIP  = (i) => Math.max(0.45, i + 1 - (1.2 + i*0.2));
 
       // First real experience: lowest starting point
-      labels.push(
-        new Date(data[0].date).toLocaleDateString(undefined, {
-          month: "short",
-          year: "numeric",
-        })
-      );
-      values.push(0.3); // force lowest value
+      labels.push(new Date(data[0].dateStart).toLocaleDateString(undefined, { month:"short", year:"numeric" }));
+      values.push(0.3);
       isReal.push(true);
-      titles.push(data[0].title);
 
-      // Then: peak (real) → dip (synthetic) → peak → ...
+      // Then peak → dip → ...
       for (let i = 1; i < data.length; i++) {
-        // real peak for this experience
-        labels.push(
-          new Date(data[i].date).toLocaleDateString(undefined, {
-            month: "short",
-            year: "numeric",
-          })
-        );
+        labels.push(new Date(data[i].dateStart).toLocaleDateString(undefined, { month:"short", year:"numeric" }));
         values.push(PEAK(i));
         isReal.push(true);
-        titles.push(data[i].title);
 
-        // synthetic dip (if not last)
         if (i < data.length - 1) {
           labels.push("");
           values.push(DIP(i));
           isReal.push(false);
-          titles.push("");
         }
       }
 
+      // Future opportunity
       labels.push("Future");
-      values.push(PEAK(data.length)); // or maybe a fixed value (like last + 1)
-      isReal.push(true); // show the dot
-      titles.push("Future Opportunity (TBD)");
+      values.push(PEAK(data.length));
+      isReal.push(true);
 
-      // 3) Theme colors
+      // 3) Map real chart points to job indices
+      const realJobIndices = [];
+      let count = 0;
+      for (let k = 0; k < isReal.length; k++) {
+        if (isReal[k]) {
+          realJobIndices[k] = count;
+          count++;
+        } else {
+          realJobIndices[k] = null;
+        }
+      }
+
+      // Include future job as last entry
+      const realJobs = [...data, {
+        title: "Future Opportunity",
+        company: "",
+        dateStart: "",
+        dateEnd: "",
+        logo: "/logos/future.png"
+      }];
+
+      // 4) Theme color
       const cs = getComputedStyle(document.documentElement);
       const lineColor = cs.getPropertyValue("--link").trim() || "#007bff";
 
-      // 4) Chart (axes hidden, big dots only on real points)
+      // 5) Chart
       const chart = new Chart(el.getContext("2d"), {
         type: "line",
         data: {
           labels,
-          datasets: [
-            {
-              data: values,
-              borderColor: lineColor,
-              borderWidth: 3,
-              tension: 0, // choppy, sharp corners
-              fill: false,
-              pointRadius: (ctx) => (isReal[ctx.dataIndex] ? 9 : 0),
-              pointHoverRadius: (ctx) => (isReal[ctx.dataIndex] ? 11 : 0),
-              pointBackgroundColor: lineColor,
-              pointBorderColor: "#fff",
-              pointBorderWidth: 2,
-            },
-          ],
+          datasets: [{
+            data: values,
+            borderColor: lineColor,
+            borderWidth: 3,
+            tension: 0,
+            fill: false,
+            pointRadius: ctx => isReal[ctx.dataIndex] ? 9 : 0,
+            pointHoverRadius: ctx => isReal[ctx.dataIndex] ? 11 : 0,
+            pointBackgroundColor: lineColor,
+            pointBorderColor: "#fff",
+            pointBorderWidth: 2
+          }]
         },
         options: {
           responsive: true,
@@ -173,10 +163,9 @@ import TypingText from "../components/TypingText.astro";
           plugins: {
             legend: { display: false },
             tooltip: {
-              filter: (ti) => isReal[ti.dataIndex], // only real points
-              enabled: false,                       // disable default
+              filter: ti => isReal[ti.dataIndex],
+              enabled: false, // disable default
               external: function(ctx) {
-                // Tooltip element
                 let tooltipEl = document.getElementById('chartjs-tooltip');
                 if (!tooltipEl) {
                   tooltipEl = document.createElement('div');
@@ -198,41 +187,32 @@ import TypingText from "../components/TypingText.astro";
                 }
 
                 const i = tooltipModel.dataPoints[0].dataIndex;
-                // Map chart index back to job index
-                const jobIndex = Math.min(Math.floor(i / 2), data.length - 1);
-                const job = data[jobIndex];
+                const jobIndex = realJobIndices[i];
+                const job = realJobs[jobIndex];
 
                 tooltipEl.innerHTML = `
-                <div style="display:flex;align-items:center;gap:10px;max-width:300px;">
-                  <img src="${job.logo}" style="width:40px;height:40px;object-fit:contain;" />
-                  <div>
-                    <strong>${job.title}</strong><br>
-                    ${job.company}<br>
-                    <small>
-                      ${new Date(job.dateStart).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}
-                      –
-                      ${new Date(job.dateEnd).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}
-                    </small>
+                  <div style="display:flex;align-items:center;gap:10px;max-width:300px;">
+                    <img src="${job.logo}" style="width:40px;height:40px;object-fit:contain;" />
+                    <div>
+                      <strong>${job.title}</strong><br>
+                      ${job.company ? job.company + "<br>" : ""}
+                      ${job.dateStart ? `<small>${new Date(job.dateStart).toLocaleDateString(undefined, {month:"long",day:"numeric",year:"numeric"})} – ${new Date(job.dateEnd).toLocaleDateString(undefined, {month:"long",day:"numeric",year:"numeric"})}</small>` : ""}
+                    </div>
                   </div>
-                </div>
-                `
+                `;
 
-                // Position tooltip relative to canvas
                 const {offsetLeft: posX, offsetTop: posY} = ctx.chart.canvas;
                 tooltipEl.style.opacity = 1;
                 tooltipEl.style.left = posX + tooltipModel.caretX + 'px';
                 tooltipEl.style.top  = posY + tooltipModel.caretY + 'px';
               }
-            },
+            }
           },
-          scales: {
-            x: { display: false },
-            y: { display: false },
-          },
-        },
+          scales: { x: { display: false }, y: { display: false } }
+        }
       });
 
-      // 5) Update colors on theme toggle
+      // 6) Update colors on theme toggle
       const recolor = () => {
         const c = getComputedStyle(document.documentElement);
         const line = c.getPropertyValue("--link").trim() || lineColor;
@@ -240,10 +220,8 @@ import TypingText from "../components/TypingText.astro";
         chart.data.datasets[0].pointBackgroundColor = line;
         chart.update();
       };
-      new MutationObserver(recolor).observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ["data-theme"],
-      });
+      new MutationObserver(recolor).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     });
-  </script>
+    </script>
+
 </Layout>
