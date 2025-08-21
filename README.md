@@ -1,46 +1,43 @@
-# Astro Starter Kit: Basics
+# Victoria Piquer's Portfolio
 
-```sh
-npm create astro@latest -- --template basics
-```
+Welcome to my personal website! Here you can find my projects, coding experiments, and more about me.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+---
 
-## 🚀 Project Structure
+## About Me
 
-Inside of your Astro project, you'll see the following folders and files:
+Hi, I'm Victoria, a Computer Science student from Calgary. I enjoy building web applications, exploring new technologies, and solving challenging coding problems.
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
+- 📍 Location: Calgary, Canada
+- 🎓 Studying: Computer Science at University of Calgary
+- 💻 Skills: JavaScript, Python, Swift, React, Astro, TailwindCSS
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+---
 
-## 🧞 Commands
+## Projects
 
-All commands are run from the root of the project, from a terminal:
+Here are some of my recent projects:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+### Project Name
+- Description: A brief description of the project.
+- Technologies: Tech stack used.
+- [View Project](#) | [GitHub Repo](#)
 
-## 👀 Want to learn more?
+### Another Project
+- Description: Another brief description.
+- Technologies: Tech stack used.
+- [View Project](#) | [GitHub Repo](#)
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+---
+
+## Contact
+
+Feel free to reach out to me:
+
+- Email: [your-email@example.com](mailto:your-email@example.com)
+- GitHub: [github.com/yourusername](https://github.com/yourusername)
+- LinkedIn: [linkedin.com/in/yourusername](https://linkedin.com/in/yourusername)
+
+---
+
+*Thanks for visiting my portfolio!*
