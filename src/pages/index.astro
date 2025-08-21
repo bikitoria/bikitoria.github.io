@@ -14,8 +14,8 @@ import TypingText from "../components/TypingText.astro";
   <section class="about">
     <p>
       I’m a Computer Science student at the University of Calgary with a passion
-      for software development, competitive programming, economic
-      history, and the gym.
+      for software development, competitive programming, economic history, and
+      the gym.
     </p>
   </section>
 
@@ -64,9 +64,11 @@ import TypingText from "../components/TypingText.astro";
   </section>
 
   <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"
+  ></script>
 
-    <script is:inline>
+  <script is:inline>
     document.addEventListener("DOMContentLoaded", async () => {
       const el = document.getElementById("expChart");
       if (!el || !window.Chart) return;
@@ -74,7 +76,9 @@ import TypingText from "../components/TypingText.astro";
       // 1) Load & sort experiences
       let data = [];
       try {
-        const res = await fetch("/data/experiences.json", { cache: "no-store" });
+        const res = await fetch("/data/experiences.json", {
+          cache: "no-store",
+        });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         data = await res.json();
       } catch (e) {
@@ -89,16 +93,26 @@ import TypingText from "../components/TypingText.astro";
       const isReal = [];
 
       const PEAK = (i) => i + 1 + 0.8 + i * 0.15;
-      const DIP  = (i) => Math.max(0.45, i + 1 - (1.2 + i*0.2));
+      const DIP = (i) => Math.max(0.45, i + 1 - (1.2 + i * 0.2));
 
       // First real experience: lowest starting point
-      labels.push(new Date(data[0].dateStart).toLocaleDateString(undefined, { month:"short", year:"numeric" }));
+      labels.push(
+        new Date(data[0].dateStart).toLocaleDateString(undefined, {
+          month: "short",
+          year: "numeric",
+        })
+      );
       values.push(0.3);
       isReal.push(true);
 
       // Then peak → dip → ...
       for (let i = 1; i < data.length; i++) {
-        labels.push(new Date(data[i].dateStart).toLocaleDateString(undefined, { month:"short", year:"numeric" }));
+        labels.push(
+          new Date(data[i].dateStart).toLocaleDateString(undefined, {
+            month: "short",
+            year: "numeric",
+          })
+        );
         values.push(PEAK(i));
         isReal.push(true);
 
@@ -109,7 +123,7 @@ import TypingText from "../components/TypingText.astro";
         }
       }
 
-      // Future opportunity
+      // Add Future opportunity
       labels.push("Future");
       values.push(PEAK(data.length));
       isReal.push(true);
@@ -126,14 +140,37 @@ import TypingText from "../components/TypingText.astro";
         }
       }
 
-      // Include future job as last entry
-      const realJobs = [...data, {
-        title: "Future Opportunity",
-        company: "",
-        dateStart: "",
-        dateEnd: "",
-        logo: "/logos/future.png"
-      }];
+      // Real jobs + future opportunity
+      const realJobs = [
+        ...data,
+        {
+          title: "Future Opportunity",
+          company: "",
+          dateStart: "",
+          dateEnd: "",
+          logo: "/logos/future.png",
+        },
+      ];
+
+      // Helper to format dates
+      const formatDate = (start, end, isFuture) => {
+        if (isFuture) return "? – ?";
+        if (!start || isNaN(new Date(start))) return "Now";
+        const startStr = new Date(start).toLocaleDateString(undefined, {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        });
+        const endStr =
+          !end || isNaN(new Date(end))
+            ? "Now"
+            : new Date(end).toLocaleDateString(undefined, {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              });
+        return `${startStr} – ${endStr}`;
+      };
 
       // 4) Theme color
       const cs = getComputedStyle(document.documentElement);
@@ -144,18 +181,20 @@ import TypingText from "../components/TypingText.astro";
         type: "line",
         data: {
           labels,
-          datasets: [{
-            data: values,
-            borderColor: lineColor,
-            borderWidth: 3,
-            tension: 0,
-            fill: false,
-            pointRadius: ctx => isReal[ctx.dataIndex] ? 9 : 0,
-            pointHoverRadius: ctx => isReal[ctx.dataIndex] ? 11 : 0,
-            pointBackgroundColor: lineColor,
-            pointBorderColor: "#fff",
-            pointBorderWidth: 2
-          }]
+          datasets: [
+            {
+              data: values,
+              borderColor: lineColor,
+              borderWidth: 3,
+              tension: 0,
+              fill: false,
+              pointRadius: (ctx) => (isReal[ctx.dataIndex] ? 9 : 0),
+              pointHoverRadius: (ctx) => (isReal[ctx.dataIndex] ? 11 : 0),
+              pointBackgroundColor: lineColor,
+              pointBorderColor: "#fff",
+              pointBorderWidth: 2,
+            },
+          ],
         },
         options: {
           responsive: true,
@@ -163,20 +202,20 @@ import TypingText from "../components/TypingText.astro";
           plugins: {
             legend: { display: false },
             tooltip: {
-              filter: ti => isReal[ti.dataIndex],
-              enabled: false, // disable default
-              external: function(ctx) {
-                let tooltipEl = document.getElementById('chartjs-tooltip');
+              filter: (ti) => isReal[ti.dataIndex],
+              enabled: false,
+              external: function (ctx) {
+                let tooltipEl = document.getElementById("chartjs-tooltip");
                 if (!tooltipEl) {
-                  tooltipEl = document.createElement('div');
-                  tooltipEl.id = 'chartjs-tooltip';
-                  tooltipEl.style.position = 'absolute';
-                  tooltipEl.style.background = '#fff';
-                  tooltipEl.style.border = '1px solid #ccc';
-                  tooltipEl.style.borderRadius = '8px';
-                  tooltipEl.style.padding = '10px';
-                  tooltipEl.style.pointerEvents = 'none';
-                  tooltipEl.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+                  tooltipEl = document.createElement("div");
+                  tooltipEl.id = "chartjs-tooltip";
+                  tooltipEl.style.position = "absolute";
+                  tooltipEl.style.background = "#fff";
+                  tooltipEl.style.border = "1px solid #ccc";
+                  tooltipEl.style.borderRadius = "8px";
+                  tooltipEl.style.padding = "10px";
+                  tooltipEl.style.pointerEvents = "none";
+                  tooltipEl.style.boxShadow = "0 2px 10px rgba(0,0,0,0.2)";
                   document.body.appendChild(tooltipEl);
                 }
 
@@ -189,27 +228,33 @@ import TypingText from "../components/TypingText.astro";
                 const i = tooltipModel.dataPoints[0].dataIndex;
                 const jobIndex = realJobIndices[i];
                 const job = realJobs[jobIndex];
+                const isFuture = job.title === "Future Opportunity";
+                const dateStr = formatDate(
+                  job.dateStart,
+                  job.dateEnd,
+                  isFuture
+                );
 
                 tooltipEl.innerHTML = `
-                  <div style="display:flex;align-items:center;gap:10px;max-width:300px;">
-                    <img src="${job.logo}" style="width:40px;height:40px;object-fit:contain;" />
-                    <div>
-                      <strong>${job.title}</strong><br>
-                      ${job.company ? job.company + "<br>" : ""}
-                      ${job.dateStart ? `<small>${new Date(job.dateStart).toLocaleDateString(undefined, {month:"long",day:"numeric",year:"numeric"})} – ${new Date(job.dateEnd).toLocaleDateString(undefined, {month:"long",day:"numeric",year:"numeric"})}</small>` : ""}
-                    </div>
+                <div style="display:flex;align-items:center;gap:10px;max-width:300px;">
+                  <img src="${job.logo}" style="width:40px;height:40px;object-fit:contain;" />
+                  <div>
+                    <strong>${job.title}</strong><br>
+                    ${job.company ? job.company + "<br>" : ""}
+                    <small>${dateStr}</small>
                   </div>
-                `;
+                </div>
+              `;
 
-                const {offsetLeft: posX, offsetTop: posY} = ctx.chart.canvas;
+                const { offsetLeft: posX, offsetTop: posY } = ctx.chart.canvas;
                 tooltipEl.style.opacity = 1;
-                tooltipEl.style.left = posX + tooltipModel.caretX + 'px';
-                tooltipEl.style.top  = posY + tooltipModel.caretY + 'px';
-              }
-            }
+                tooltipEl.style.left = posX + tooltipModel.caretX + "px";
+                tooltipEl.style.top = posY + tooltipModel.caretY + "px";
+              },
+            },
           },
-          scales: { x: { display: false }, y: { display: false } }
-        }
+          scales: { x: { display: false }, y: { display: false } },
+        },
       });
 
       // 6) Update colors on theme toggle
@@ -220,8 +265,10 @@ import TypingText from "../components/TypingText.astro";
         chart.data.datasets[0].pointBackgroundColor = line;
         chart.update();
       };
-      new MutationObserver(recolor).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+      new MutationObserver(recolor).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme"],
+      });
     });
-    </script>
-
+  </script>
 </Layout>
