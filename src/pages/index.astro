@@ -14,7 +14,7 @@ import TypingText from "../components/TypingText.astro";
   <section class="about">
     <p>
       I’m a Computer Science student at the University of Calgary with a passion
-      for software development, competitive programming, politics, economic
+      for software development, competitive programming, economic
       history, and the gym.
     </p>
   </section>
@@ -138,6 +138,11 @@ import TypingText from "../components/TypingText.astro";
         }
       }
 
+      labels.push("Future");
+      values.push(PEAK(data.length)); // or maybe a fixed value (like last + 1)
+      isReal.push(true); // show the dot
+      titles.push("Future Opportunity (TBD)");
+
       // 3) Theme colors
       const cs = getComputedStyle(document.documentElement);
       const lineColor = cs.getPropertyValue("--link").trim() || "#007bff";
@@ -168,12 +173,56 @@ import TypingText from "../components/TypingText.astro";
           plugins: {
             legend: { display: false },
             tooltip: {
-              filter: (ti) => isReal[ti.dataIndex], // tooltips only for real points
-              callbacks: {
-                title: () => "",
-                label: (ctx) =>
-                  `${titles[ctx.dataIndex]} (${ctx.formattedValue})`,
-              },
+              filter: (ti) => isReal[ti.dataIndex], // only real points
+              enabled: false,                       // disable default
+              external: function(ctx) {
+                // Tooltip element
+                let tooltipEl = document.getElementById('chartjs-tooltip');
+                if (!tooltipEl) {
+                  tooltipEl = document.createElement('div');
+                  tooltipEl.id = 'chartjs-tooltip';
+                  tooltipEl.style.position = 'absolute';
+                  tooltipEl.style.background = '#fff';
+                  tooltipEl.style.border = '1px solid #ccc';
+                  tooltipEl.style.borderRadius = '8px';
+                  tooltipEl.style.padding = '10px';
+                  tooltipEl.style.pointerEvents = 'none';
+                  tooltipEl.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+                  document.body.appendChild(tooltipEl);
+                }
+
+                const tooltipModel = ctx.tooltip;
+                if (tooltipModel.opacity === 0) {
+                  tooltipEl.style.opacity = 0;
+                  return;
+                }
+
+                const i = tooltipModel.dataPoints[0].dataIndex;
+                // Map chart index back to job index
+                const jobIndex = Math.min(Math.floor(i / 2), data.length - 1);
+                const job = data[jobIndex];
+
+                tooltipEl.innerHTML = `
+                <div style="display:flex;align-items:center;gap:10px;max-width:300px;">
+                  <img src="${job.logo}" style="width:40px;height:40px;object-fit:contain;" />
+                  <div>
+                    <strong>${job.title}</strong><br>
+                    ${job.company}<br>
+                    <small>
+                      ${new Date(job.dateStart).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}
+                      –
+                      ${new Date(job.dateEnd).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}
+                    </small>
+                  </div>
+                </div>
+                `
+
+                // Position tooltip relative to canvas
+                const {offsetLeft: posX, offsetTop: posY} = ctx.chart.canvas;
+                tooltipEl.style.opacity = 1;
+                tooltipEl.style.left = posX + tooltipModel.caretX + 'px';
+                tooltipEl.style.top  = posY + tooltipModel.caretY + 'px';
+              }
             },
           },
           scales: {
