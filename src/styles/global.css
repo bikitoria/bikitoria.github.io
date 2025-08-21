@@ -109,6 +109,8 @@ main
   --muted: #e6e2df;
   --link: #333;
   --veil: rgba(242,240,239,.85);
+  --tooltip-bg: #fff;
+  --tooltip-color: #000;
 }
 
 :root[data-theme="dark"] {
@@ -117,6 +119,8 @@ main
   --muted: #3a3a3a;            /* borders / muted elements */
   --link: #e0e0e0;             /* soft bluish links */
   --veil: rgba(30, 30, 30, 0.85); /* semi-transparent overlay */
+  --tooltip-bg: #222;
+  --tooltip-color: #eee;
 }
 
 html, body {
