@@ -1,0 +1,16 @@
+[
+  {
+    "title": "facebook plus",
+    "description": "facebook clone with special features + bobs burgers",
+    "link": "https://github.com/bikitoria/Facebook-plus",
+    "image": "/images/facebook-plus.png",
+    "tech": ["React", "Node.js", "MongoDB"]
+  },
+  {
+    "title": "Another Project",
+    "description": "Another awesome project.",
+    "link": "https://github.com/bikitoria/another-project",
+    "image": "/images/facebook-plus.png",
+    "tech": ["React", "Node.js", "MongoDB"]
+  }
+]

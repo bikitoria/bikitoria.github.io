@@ -234,3 +234,67 @@ html {
   background: var(--veil);
   opacity: .9;
 }
+
+/*
+Portfolio section
+*/
+.portfolio {
+  display: flex;          /* use flex instead of grid for fixed card widths */
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center; /* center the cards */
+  max-width: 1000px;
+  margin: auto;
+}
+
+.card {
+  width: 250px;           /* fixed width for each card */
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: scale(50); /* scale up by 10% */
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.card img {
+  width: 100%;
+  height: 150px;          /* keeps image proportional */
+  object-fit: cover;
+}
+
+.card-body {
+  padding: 1rem;
+}
+
+.card-body h3 {
+  font-size: 1.1rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.card-body p {
+  font-size: 0.85rem;
+  margin: 0 0 1rem 0;
+}
+
+.card-links a {
+  margin-right: 1rem;
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.card-links a:hover {
+  text-decoration: underline;
+}
+
+.card-body .tech {
+  font-size: 0.8rem;
+  color: #333;
+  margin-bottom: 0.8rem;
+}
