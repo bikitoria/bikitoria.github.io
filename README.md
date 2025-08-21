@@ -1,6 +1,6 @@
 # Victoria Piquer's Portfolio
 
-Welcome to my personal website! Here you can find my projects, coding experiments, and more about me.
+Welcome to my personal website!
 
 ---
 
