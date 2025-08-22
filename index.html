@@ -1,0 +1,296 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Victoria Piquer</title><!-- typing + theme scripts --><script src="/scripts/typing-text.js" defer></script><script src="/scripts/theme-toggle.js" defer></script><script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js" defer></script><script src="/scripts/experience-chart.js" defer></script><link rel="stylesheet" href="/_astro/index.7g6e2xT3.css"></head> <body style="margin:0;"> <!-- removed background inline --> <header class="site-header"> <nav class="nav"> <div class="links"> <a href="mailto:victoriapiquer.3@gmail.com">Contact</a> <a href="https://www.linkedin.com/in/victoria-piquer-35452a25a/" target="_blank" rel="noopener">LinkedIn</a> <a href="https://github.com/bikitoria" target="_blank" rel="noopener">GitHub</a> <a href="#portfolio" aria-label="Portfolio">Portfolio</a> </div> <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" aria-pressed="false"> <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"> <circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4 12H2m20 0h-2M5 5l-1.4-1.4M20.4 20.4 19 19M5 19l-1.4 1.4M20.4 3.6 19 5"></path> </svg> <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> </button> </nav> </header> <main>    <section class="hero-block px-4 sm:px-8 mt-0 mb-6 text-center sm:text-left"> <span class="typing-wrap hero-title text-3xl sm:text-5xl md:text-6xl font-bold" data-text data-loops="2" data-type="70" data-erase="50" data-pause="600" data-keep="0" data-keepwords="2" data-keepprefix="3" aria-live="polite" data-astro-cid-dpb7jah2> <span class="typing-text" data-astro-cid-dpb7jah2>
+Hi, I'm Victoria
+</span> <span class="caret" aria-hidden="true" data-astro-cid-dpb7jah2></span> </span>  <p class="hero-subtitle text-base sm:text-lg md:text-xl mt-4 text-gray-700 dark:text-gray-300">
+UCalgary Computer Science • Software Dev
+</p> </section>  <section class="about max-w-2xl mx-auto px-4 sm:px-8 text-center sm:text-left mt-0"> <p class="text-sm sm:text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+I’m a Computer Science student at the University of Calgary with a passion
+      for software development, competitive programming, economic history, and
+      the gym.
+</p> </section>  <div class="max-w-4xl mx-auto w-full h-[250px] sm:h-[400px] md:h-[500px] mt-8 mb-12 px-4 sm:px-8"> <canvas id="expChart" class="w-full h-full"></canvas> </div>  <h2 id="portfolio" class="portfolio-title text-2xl sm:text-3xl font-bold text-center sm:text-left px-4 sm:px-8 mt-12 mb-6">
+Portfolio
+</h2> <section id="portfolio" class="portfolio grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4 sm:px-6 lg:px-8"> <!-- Cards injected here --> </section> <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const container = document.getElementById("portfolio");
+      if (!container) return;
+
+      let projects = [];
+      try {
+        const res = await fetch("/data/projects.json", { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        projects = await res.json();
+      } catch (e) {
+        console.error("Could not load projects:", e);
+        container.innerHTML = "<p>Failed to load projects.</p>";
+        return;
+      }
+
+      container.innerHTML = projects.map(project => `
+        <article class="card bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-xl transition-transform transform hover:scale-105 overflow-hidden flex flex-col">
+          <img src="${project.image}" alt="Screenshot of ${project.title}" class="w-full h-48 sm:h-56 md:h-64 object-cover" />
+          <div class="card-body p-4 flex flex-col flex-1">
+            <h3 class="text-lg sm:text-xl font-semibold mb-2">${project.title}</h3>
+            <p class="text-sm sm:text-base flex-1">${project.description}</p>
+            ${project.tech ? `
+              <div class="tech-badges flex flex-wrap gap-2 mt-3">
+                ${project.tech.map(t => `<span class="tech-badge bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-md text-xs sm:text-sm">${t}</span>`).join('')}
+              </div>
+            ` : ""}
+            <div class="card-links flex gap-4 mt-4">
+              ${project.live ? `<a href="${project.live}" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400 font-medium hover:underline">Live</a>` : ""}
+              ${project.code ? `<a href="${project.code}" target="_blank" rel="noopener" class="github-link text-gray-700 dark:text-gray-300 font-medium hover:underline">GitHub</a>` : ""}
+            </div>
+          </div>
+        </article>
+      `).join("");
+    });
+  </script>  <script type="module" src="/_astro/index.astro_astro_type_script_index_0_lang.DwbIT2HM.js"></script> <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const container = document.getElementById("portfolio");
+      if (!container) return;
+
+      let projects = [];
+      try {
+        const res = await fetch("/data/projects.json", { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        projects = await res.json();
+      } catch (e) {
+        console.error("Could not load projects:", e);
+        container.innerHTML = "<p>Failed to load projects.</p>";
+        return;
+      }
+
+      // Render cards
+     container.innerHTML = projects.map(project => `
+      <article class="card">
+        <img src="${project.image}" alt="Screenshot of ${project.title}" />
+        <div class="card-body">
+          <h3>${project.title}</h3>
+          <p>${project.description}</p>
+          ${project.tech ? `
+            <div class="tech-badges">
+              ${project.tech.map(t => `<span class="tech-badge">${t}</span>`).join('')}
+            </div>
+          ` : ""}
+          <div class="card-links">
+            ${project.live ? `<a href="${project.live}" target="_blank" rel="noopener">Live</a>` : ""}
+            ${project.code ? `<a href="${project.code}" target="_blank" rel="noopener" class="github-link">GitHub</a>` : ""}
+          </div>
+        </div>
+      </article>
+    `).join("");
+    });
+  </script>  <script type="module" src="/_astro/index.astro_astro_type_script_index_1_lang.DwbIT2HM.js"></script> <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const el = document.getElementById("expChart");
+      if (!el || !window.Chart) return;
+
+      // 1) Load & sort experiences
+      let data = [];
+      try {
+        const res = await fetch("/data/experiences.json", {
+          cache: "no-store",
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        data = await res.json();
+      } catch (e) {
+        console.error("Could not load experiences:", e);
+        return;
+      }
+      data.sort((a, b) => new Date(a.dateStart) - new Date(b.dateStart));
+
+      // 2) Build series
+      const labels = [];
+      const values = [];
+      const isReal = [];
+
+      const PEAK = (i) => i + 1 + 0.8 + i * 0.15;
+      const DIP = (i) => Math.max(0.45, i + 1 - (1.2 + i * 0.2));
+
+      // First real experience: lowest starting point
+      labels.push(
+        new Date(data[0].dateStart).toLocaleDateString(undefined, {
+          month: "short",
+          year: "numeric",
+        })
+      );
+      values.push(0.3);
+      isReal.push(true);
+
+      // Then peak → dip → ...
+      for (let i = 1; i < data.length; i++) {
+        labels.push(
+          new Date(data[i].dateStart).toLocaleDateString(undefined, {
+            month: "short",
+            year: "numeric",
+          })
+        );
+        values.push(PEAK(i));
+        isReal.push(true);
+
+        if (i < data.length - 1) {
+          labels.push("");
+          values.push(DIP(i));
+          isReal.push(false);
+        }
+      }
+
+      // 3) Add future point
+      const futureJob = {
+        title: "?",
+        company: "",
+        dateStart: "",
+        dateEnd: "",
+        logo: "/logos/future.png",
+        isFuture: true,
+      };
+      const realJobs = [...data, futureJob];
+      labels.push("?");
+      values.push(PEAK(data.length));
+      isReal.push(true);
+
+      // 4) Map chart points to job indices
+      const realJobIndices = [];
+      let count = 0;
+      for (let k = 0; k < isReal.length; k++) {
+        if (isReal[k]) {
+          realJobIndices[k] = count;
+          count++;
+        } else {
+          realJobIndices[k] = null;
+        }
+      }
+
+      // Helper to format dates
+      const formatDate = (start, end, isFuture) => {
+        if (isFuture) return "? – ?";
+        if (!start || isNaN(new Date(start))) return "Now";
+        const startStr = new Date(start).toLocaleDateString(undefined, {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        });
+        const endStr =
+          !end || isNaN(new Date(end))
+            ? "Now"
+            : new Date(end).toLocaleDateString(undefined, {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              });
+        return `${startStr} – ${endStr}`;
+      };
+
+      // 5) Theme color
+      const cs = getComputedStyle(document.documentElement);
+      const lineColor = cs.getPropertyValue("--link").trim() || "#007bff";
+
+      // 6) Chart
+      const chart = new Chart(el.getContext("2d"), {
+        type: "line",
+        data: {
+          labels,
+          datasets: [
+            {
+              data: values,
+              borderColor: lineColor,
+              borderWidth: 3,
+              tension: 0,
+              fill: false,
+              pointRadius: (ctx) => (isReal[ctx.dataIndex] ? 9 : 0),
+              pointHoverRadius: (ctx) => (isReal[ctx.dataIndex] ? 11 : 0),
+              pointBackgroundColor: lineColor,
+              pointBorderColor: "#fff",
+              pointBorderWidth: 2,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              filter: (ti) => isReal[ti.dataIndex],
+              enabled: false,
+              external: function (ctx) {
+                let tooltipEl = document.getElementById("chartjs-tooltip");
+                if (!tooltipEl) {
+                  tooltipEl = document.createElement("div");
+                  tooltipEl.id = "chartjs-tooltip";
+                  tooltipEl.style.position = "absolute";
+                  tooltipEl.style.border = "1px solid #ccc";
+                  tooltipEl.style.borderRadius = "8px";
+                  tooltipEl.style.padding = "10px";
+                  tooltipEl.style.pointerEvents = "none";
+                  tooltipEl.style.boxShadow = "0 2px 10px rgba(0,0,0,0.2)";
+                  document.body.appendChild(tooltipEl);
+                }
+
+                // Theme colors
+                const c = getComputedStyle(document.documentElement);
+                tooltipEl.style.background = c
+                  .getPropertyValue("--tooltip-bg")
+                  .trim();
+                tooltipEl.style.color = c
+                  .getPropertyValue("--tooltip-color")
+                  .trim();
+
+                const tooltipModel = ctx.tooltip;
+                if (tooltipModel.opacity === 0) {
+                  tooltipEl.style.opacity = 0;
+                  return;
+                }
+
+                const i = tooltipModel.dataPoints[0].dataIndex;
+                const jobIndex = realJobIndices[i];
+                const job = realJobs[jobIndex];
+
+                if (job.isFuture) {
+                  tooltipEl.innerHTML = `<div style="font-size:40px;font-weight:bold;text-align:center;">?</div>`;
+                } else {
+                  tooltipEl.innerHTML = `
+                <div style="display:flex;align-items:center;gap:10px;max-width:300px;">
+                  <img src="${job.logo}" style="width:40px;height:40px;object-fit:contain;" />
+                  <div>
+                    <strong>${job.title}</strong><br>
+                    ${job.company ? job.company + "<br>" : ""}
+                    <small>${formatDate(job.dateStart, job.dateEnd, job.isFuture)}</small>
+                  </div>
+                </div>
+              `;
+                }
+
+                const { offsetLeft: posX, offsetTop: posY } = ctx.chart.canvas;
+                tooltipEl.style.opacity = 1;
+                tooltipEl.style.left = posX + tooltipModel.caretX + "px";
+                tooltipEl.style.top = posY + tooltipModel.caretY + "px";
+              },
+            },
+          },
+          scales: { x: { display: false }, y: { display: false } },
+        },
+      });
+
+      // 7) Update colors on theme toggle
+      const recolor = () => {
+        const c = getComputedStyle(document.documentElement);
+        const line = c.getPropertyValue("--link").trim() || lineColor;
+        chart.data.datasets[0].borderColor = line;
+        chart.data.datasets[0].pointBackgroundColor = line;
+
+        const tooltipEl = document.getElementById("chartjs-tooltip");
+        if (tooltipEl) {
+          tooltipEl.style.background = c
+            .getPropertyValue("--tooltip-bg")
+            .trim();
+          tooltipEl.style.color = c.getPropertyValue("--tooltip-color").trim();
+        }
+
+        chart.update();
+      };
+      new MutationObserver(recolor).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme"],
+      });
+    });
+  </script>  </main> </body></html>

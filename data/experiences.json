@@ -1,0 +1,30 @@
+[
+  {
+    "title": "Coding Instructor",
+    "company": "Code Ninjas",
+    "dateStart": "2023/06/01",
+    "dateEnd": "2024/08/31",
+    "logo": "/logos/codeninjas_logo.jpg"
+  },
+  {
+    "title": "Summer Camp Tech Leader",
+    "company": "Southern Alberta Institute of Technology (SAIT)",
+    "dateStart": "2024/06/20",
+    "dateEnd": "2024/08/31",
+    "logo": "/logos/saitca_logo.jpg"
+  },
+  {
+    "title": "Student IT - End User Experience",
+    "company": "UFA",
+    "dateStart": "2025/05/01",
+    "dateEnd": "2025/08/31",
+    "logo": "/logos/ufa_logo.jpg"
+  },
+  {
+    "title": "President",
+    "company": "Competitive Programming Club",
+    "dateStart": "2025/07/01",
+    "dateEnd": "now",
+    "logo": "/logos/cpc_logo.jpg"
+  }
+]
