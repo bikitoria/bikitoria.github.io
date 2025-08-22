@@ -341,3 +341,7 @@ Portfolio section
 .github-link:active {
   transform: translateY(1px);
 }
+
+section {
+  @apply py-12 sm:py-16;
+}
